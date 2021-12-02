@@ -114,6 +114,7 @@ function makeResetBtn() {
 
 		resetBtn.remove();
 	});
+
 	document.body.append(resetBtn);
 }
 function makeWinNotification(num) {
@@ -148,8 +149,7 @@ function winVert(x) {
 	for (let j = 0; j < height; j++) {
 		let vertWinArr = vert.slice(j, j + 4);
 		if (checkWinArr(vertWinArr)) {
-			makeWinNotification(playerTurn);
-			disableMoves();
+			displayWin();
 		}
 	}
 }
@@ -161,32 +161,16 @@ function winDiagUpRight(x, y) {
 			diag.push(boardArr[y - i][x + i]);
 		}
 	}
+	for (let i = 1; i < width; i++) {
+		if (y + i <= 5 && y + i >= 0 && x - i <= 6 && x - i >= 0) {
+			diag.unshift(boardArr[y + i][x - i]);
+		}
+	}
 	console.log(diag);
 	for (let j = 0; j < 6; j++) {
 		let winDiagArrUpRight = diag.slice(j, j + 4);
 		if (checkWinArr(winDiagArrUpRight)) {
-			makeWinNotification(playerTurn);
-			disableMoves();
-			alert(`Player ${playerTurn} wins!`);
-		}
-	}
-}
-
-function winDiagDownLeft(x, y) {
-	let diagDownLeft = [];
-	for (let i = 0; i < width; i++) {
-		if (y + i <= 5 && y + i >= 0 && x - i <= 6 && x - i >= 0) {
-			diagDownLeft.push(boardArr[y + i][x - i]);
-		}
-	}
-
-	for (let j = 0; j < height; j++) {
-		let diagWinArrUL = diagDownLeft.slice(j, j + 4);
-		if (checkWinArr(diagWinArrUL)) {
-			makeWinNotification(playerTurn);
-			disableMoves();
-
-			alert(`Player ${playerTurn} wins!`);
+			displayWin();
 		}
 	}
 }
@@ -200,41 +184,33 @@ function winDiagUpLeft(x, y) {
 	}
 	console.log(diagUpLeft);
 
+	// this loop adds diagonal-down- right to the arr
+
+	for (let i = 1; i < width; i++) {
+		if (y + i <= 5 && y + i >= 0 && x + i <= 6 && x + i >= 0) {
+			diagUpLeft.unshift(boardArr[y + i][x + i]);
+		}
+	}
+
 	for (let j = 0; j < height; j++) {
 		let diagWinArrUpLeft = diagUpLeft.slice(j, j + 4);
 		if (checkWinArr(diagWinArrUpLeft)) {
-			makeWinNotification(playerTurn);
-			disableMoves();
-			alert(`Player ${playerTurn} wins!`);
+			displayWin();
 		}
 	}
+}
+
+function displayWin() {
+	makeWinNotification(playerTurn);
+	disableMoves();
+	alert(`Player ${playerTurn} wins!`);
 }
 
 function winHor(y) {
 	for (let i = 0; i < width; i++) {
 		let horWinArr = boardArr[y].slice(i, i + 4);
 		if (checkWinArr(horWinArr)) {
-			console.log(checkWinArr(horWinArr));
-			makeWinNotification(playerTurn);
-			disableMoves();
-			alert(`Player ${playerTurn} wins!`);
-		}
-	}
-}
-
-function winDiagDownRight(x, y) {
-	let diagDownRight = [];
-	for (let i = 0; i < width; i++) {
-		if (y + i <= 5 && y + i >= 0 && x + i <= 6 && x + i >= 0) {
-			diagDownRight.push(boardArr[y + i][x + i]);
-		}
-	}
-	for (let j = 0; j < height; j++) {
-		let diagWinArrDownRight = diagDownRight.slice(j, j + 4);
-		if (checkWinArr(diagWinArrDownRight)) {
-			makeWinNotification(playerTurn);
-			disableMoves();
-			alert(`Player ${playerTurn} wins!`);
+			displayWin();
 		}
 	}
 }
@@ -248,8 +224,6 @@ function checkForWin(x, y) {
 	winVert(x);
 	winDiagUpRight(x, y);
 	winDiagUpLeft(x, y);
-	winDiagDownLeft(x, y);
-	winDiagDownRight(x, y);
 }
 
 function placeInTable(x, y) {
@@ -299,6 +273,6 @@ function handleClick(e) {
 
 	updateBoardArr(xPos, yPos);
 	checkForWin(xPos, yPos);
-	setTimeout(switchPlayer(), 100);
+	switchPlayer();
 	updateHUD();
 }
